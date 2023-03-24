@@ -152,11 +152,11 @@ buttonElement.addEventListener("click", () => {
       commentTextAreaElement.value = "";   
 });
 
-//Удаление последнего элемента. Добавьте на страницу кнопку «Удалить последний 
+/*/Удаление последнего элемента. Добавьте на страницу кнопку «Удалить последний 
 //комментарий», при клике на которую из списка удаляется последний комментарий.
 const buttonDeleteElement = document.getElementById("delete-button");
 buttonDeleteElement.addEventListener("click", () => {
   listElement.innerHTML = listElement.innerHTML.substring( 0,
     listElement.innerHTML.lastIndexOf('<li class="comment">')
   );
-});
+});*/
