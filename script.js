@@ -67,6 +67,13 @@ function likeButton () {
   }
 };
 
+// Добавление элемента в список по нажатию Enter 
+document.addEventListener("keyup", function (e) {
+  if (e.keyCode === 13) {
+    document.getElementById("add-button").click();
+  }
+});
+
 buttonElement.addEventListener("click", () => {
   const date = new Date();
   let year = date.getFullYear() % 100;
@@ -104,7 +111,6 @@ buttonElement.addEventListener("click", () => {
   });
 
   renderComments();
-
 
   /*const oldListElement = listElement.innerHTML;
   listElement.innerHTML = oldListElement + `
