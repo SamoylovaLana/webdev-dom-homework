@@ -21,6 +21,7 @@ const comments = [
   },
 ];
 
+//Рендерим comments
 const renderComments = () => {
   const commentsHtml = comments
   .map((comment, index) => {
@@ -47,7 +48,7 @@ const renderComments = () => {
 };
 
 renderComments();
-
+//«Оживляем» кнопку и счетчик лайков у каждого комментария.
 function likeButton () {
    //Находит все элементы с классом like-button в разметке
   const likeElements = document.querySelectorAll('.like-button');
@@ -67,11 +68,26 @@ function likeButton () {
   }
 };
 
+
+//Расширенная валидация. Сделайте так, чтобы кнопка «Написать» выключалась 
+//(становится некликабельной, красится в серый цвет), если имя или текст в 
+//форме незаполненные.
+function checkParams() {
+  if (nameInputElement.value.trim() != 0 && commentTextAreaElement.value.trim() != 0) {
+    buttonElement.style.backgroundColor = "#bcec30";
+    buttonElement.disabled = false;
+  } else {
+    buttonElement.style.backgroundColor = "gray";
+    buttonElement.disabled = true;
+  }
+}
+
 // Добавление элемента в список по нажатию Enter 
 document.addEventListener("keyup", function (e) {
   if (e.keyCode === 13) {
     document.getElementById("add-button").click();
   }
+  checkParams();
 });
 
 buttonElement.addEventListener("click", () => {
@@ -134,4 +150,13 @@ buttonElement.addEventListener("click", () => {
    
       nameInputElement.value = ""; 
       commentTextAreaElement.value = "";   
+});
+
+//Удаление последнего элемента. Добавьте на страницу кнопку «Удалить последний 
+//комментарий», при клике на которую из списка удаляется последний комментарий.
+const buttonDeleteElement = document.getElementById("delete-button");
+buttonDeleteElement.addEventListener("click", () => {
+  listElement.innerHTML = listElement.innerHTML.substring( 0,
+    listElement.innerHTML.lastIndexOf('<li class="comment">')
+  );
 });
