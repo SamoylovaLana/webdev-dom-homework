@@ -147,7 +147,7 @@ function answer() {
  const commentElements = document.querySelectorAll('.comment');
  for (const commentElement of commentElements) {
    commentElement.addEventListener("click", () => {
-    commentTextAreaElement.value = ` > ${comments[commentElement.dataset.index].comment} \n  ${comments[commentElement.dataset.index].name}, `;
+    commentTextAreaElement.value = `> ${comments[commentElement.dataset.index].comment} \n ${comments[commentElement.dataset.index].name}, `;
    });
  }
 };
