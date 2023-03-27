@@ -2,7 +2,7 @@ const buttonElement = document.getElementById("add-button");
 const listElement = document.getElementById("list");
 const nameInputElement = document.getElementById("name-input");
 const commentTextAreaElement = document.getElementById("comment-textarea");
-const commentElements = document.querySelectorAll('.comment');
+
 
 const comments = [
   {
@@ -25,7 +25,7 @@ const comments = [
 const renderComments = () => {
   const commentsHtml = comments
   .map((comment, index) => {
-    return `<li class="comment">
+    return `<li class="comment" data-index ='${index}' >
       <div class="comment-header">
          <div>${comment.name}</div>
          <div>${comment.date}</div>
@@ -45,6 +45,7 @@ const renderComments = () => {
   
   listElement.innerHTML = commentsHtml;
   likeButton ();
+  answer();
   
 }; 
 
@@ -56,7 +57,7 @@ function likeButton () {
     //Цикл for проходит по каждому элементу в списке
   for (const likeElement of likeElements) {
     //Добавляет обработчик клика на конкретный элемент в списке
-    likeElement.addEventListener("click", () => {
+    likeElement.addEventListener("click", (event) => {
       if (likeElement.classList.contains("-active-like")) {
         comments[likeElement.dataset.index].likeButton = "";
         comments[likeElement.dataset.index].likeCounter -= 1;
@@ -64,11 +65,11 @@ function likeButton () {
         comments[likeElement.dataset.index].likeButton = "-active-like";
         comments[likeElement.dataset.index].likeCounter++;
       }
+      event.stopPropagation(); //останавливает всплытие события вверх по дереву
       renderComments();
     });
   }
 };
-
 
 //Расширенная валидация. Сделайте так, чтобы кнопка «Написать» выключалась 
 //(становится некликабельной, красится в серый цвет), если имя или текст в 
@@ -120,44 +121,33 @@ buttonElement.addEventListener("click", () => {
   }
 
   comments.push ({
-    name: nameInputElement.value,
+    name: nameInputElement.value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;"),
     date: currentDate,
-    comment: commentTextAreaElement.value,
+    comment: commentTextAreaElement.value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;"),
     likeCounter: 0,
     likeButton: "",
   });
 
   renderComments();
 
-  /*const oldListElement = listElement.innerHTML;
-  listElement.innerHTML = oldListElement + `
-            <li class="comment">
-        <div class="comment-header">
-          <div>${nameInputElement.value}</div>
-          <div>${currentDate}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${commentTextAreaElement.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>`*/
-   
-      nameInputElement.value = ""; //очищает форму input после добавления комментария
-      commentTextAreaElement.value = "";  //очищает форму textarea после добавления комментария 
-});
+  nameInputElement.value = ""; //очищает форму input после добавления комментария
+  commentTextAreaElement.value = "";  //очищает форму textarea после добавления комментария 
+});  
 
-/*/Удаление последнего элемента. Добавьте на страницу кнопку «Удалить последний 
-//комментарий», при клике на которую из списка удаляется последний комментарий.
-const buttonDeleteElement = document.getElementById("delete-button");
-buttonDeleteElement.addEventListener("click", () => {
-  listElement.innerHTML = listElement.innerHTML.substring( 0,
-    listElement.innerHTML.lastIndexOf('<li class="comment">')
-  );
-});*/
+//Сценарий «Ответы на комментарии»
+function answer() {
+ const commentElements = document.querySelectorAll('.comment');
+ for (const commentElement of commentElements) {
+   commentElement.addEventListener("click", () => {
+    commentTextAreaElement.value = ` > ${comments[commentElement.dataset.index].comment} \n  ${comments[commentElement.dataset.index].name}, `;
+   });
+ }
+};
