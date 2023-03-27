@@ -45,7 +45,8 @@ const renderComments = () => {
   
   listElement.innerHTML = commentsHtml;
   likeButton ();
-};
+  
+}; 
 
 renderComments();
 //«Оживляем» кнопку и счетчик лайков у каждого комментария.
@@ -148,8 +149,8 @@ buttonElement.addEventListener("click", () => {
         </div>
       </li>`*/
    
-      nameInputElement.value = ""; 
-      commentTextAreaElement.value = "";   
+      nameInputElement.value = ""; //очищает форму input после добавления комментария
+      commentTextAreaElement.value = "";  //очищает форму textarea после добавления комментария 
 });
 
 /*/Удаление последнего элемента. Добавьте на страницу кнопку «Удалить последний 
