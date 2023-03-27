@@ -1,118 +1,29 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Проект "Комменты"</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-
-  <body>
-    <div class="container">
-      <ul id="list" class="comments">
-        <li class="comment">
-          <div class="comment-header">
-            <div>Глеб Фокин</div>
-            <div>12.02.22 12:18</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Это будет первый комментарий на этой странице
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">3</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-        <li class="comment">
-          <div class="comment-header">
-            <div>Варвара Н.</div>
-            <div>13.02.22 19:22</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              Мне нравится как оформлена эта страница! ❤
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">75</span>
-              <button class="like-button -active-like"></button>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div class="add-form">
-        <input id="name-input"
-          type="text" 
-          class="add-form-name"
-          placeholder="Введите ваше имя"
-        />
-        <textarea id="comment-textarea"
-          type="textarea" 
-          class="add-form-text"
-          placeholder="Введите ваш коментарий"
-          rows="4"
-        ></textarea>
-        <div class="add-form-row">
-          <button id="add-button" class="add-form-button">Написать</button>
-        </div>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Проект "Комменты"</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <ul id="list" class="comments">
+      <!--Список рендерится из JS -->
+    </ul>
+    <div class="add-form">
+      <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+      <textarea id="comment-textarea" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+      <div class="add-form-row">
+        <button id="add-button" class="add-form-button">Написать</button>
       </div>
+      <!--<div class="add-form-row">
+        <button  data-index ='${index}' id="delete-button" class="add-form-button">Удалить последний комментарий</button>
+      </div>-->
     </div>
-  </body>
-  <script>
-    const buttonElement = document.getElementById('add-button');
-    const listElement = document.getElementById("list");
-    const nameInputElement = document.getElementById("name-input");
-    const commentTextAreaElement = document.getElementById("comment-textarea");
-  
-    buttonElement.addEventListener("click", () => {
-      const date = new Date();
-      let year = date.getFullYear() % 100;
-      let month = date.getMonth() +1;
-      let day = date.getDay();
-      let hour = date.getHours();
-      let minute = date.getMinutes();
-      if (day < 10) {
-        day = "0" + day;
-      } if (hour < 10) {
-        hour = "0" + hour;
-      } if (minute < 10) {
-        minute = "0" + minute;
-      } if (month < 10) {
-        month = "0" + month;
-      }
-      const currentDate = day + '.' + month + '.' + year + '  ' + hour + ':' + minute;
-      
-      nameInputElement.classList.remove("error");
-      commentTextAreaElement.classList.remove("error");
-      if (nameInputElement.value === '') {
-        nameInputElement.classList.add("error");
-        return;
-      } if (commentTextAreaElement.value === '') {
-        commentTextAreaElement.classList.add("error");
-        return;
-      }
-      const oldListElement = listElement.innerHTML;
-      listElement.innerHTML = oldListElement +`
-              <li class="comment">
-          <div class="comment-header">
-            <div>${nameInputElement.value}</div>
-            <div>${currentDate}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentTextAreaElement.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>`
-    });
-  </script>
+  </div>
+  <script src="script.js"></script>
+</body>
 </html>
