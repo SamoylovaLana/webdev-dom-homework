@@ -120,7 +120,18 @@ buttonElement.addEventListener("click", () => {
     commentTextAreaElement.classList.add("error");
     return;
   }
- 
+  const options = {
+    year: "2-digit",
+    month: "numeric",
+    day: "numeric",
+    timezone: "UTC",
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+
+  const currentDate = new Date().toLocaleString("ru-RU", options);
+
   comments.push ({
     name: nameInputElement.value
     .replaceAll("&", "&amp;")
@@ -138,7 +149,6 @@ buttonElement.addEventListener("click", () => {
   });
 
    //Добавляем комментарий
-    
     fetch('https://webdev-hw-api.vercel.app/api/v1/lana-samoylova/comments',{
       method:"POST",
       body: JSON.stringify ({
@@ -150,15 +160,6 @@ buttonElement.addEventListener("click", () => {
       const jsonPromise = response.json();
       jsonPromise.then((responseData) => {
         const appComments = responseData.comments.map((comment) => {
-          const options = {
-            year: "2-digit",
-            month: "numeric",
-            day: "numeric",
-            timezone: "UTC",
-            hour: "numeric",
-            minute: "2-digit",
-            second: "2-digit",
-          };
           return {
             name:comment.author.name,
             date: new Date(comment.date).toLocaleString("ru-RU", options),
@@ -177,7 +178,6 @@ buttonElement.addEventListener("click", () => {
   nameInputElement.value = ""; //очищает форму input после добавления комментария
   commentTextAreaElement.value = "";  //очищает форму textarea после добавления комментария 
 });  
-
 
 //Сценарий «Ответы на комментарии»
 function answer() {
