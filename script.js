@@ -104,7 +104,7 @@ function checkParams() {
 // Добавление элемента в список по нажатию Enter 
 document.addEventListener("keyup",(event) => {
   if (event.code === "Enter") {
-    document.getElementById("add-button").click();
+    buttonElement.click();
   }
   checkParams();
 });
