@@ -4,22 +4,40 @@ const nameInputElement = document.getElementById("name-input");
 const commentTextAreaElement = document.getElementById("comment-textarea");
 
 
-const comments = [
-  {
-    name: "Глеб Фокин",
-    date: "12.02.22 12:18",
-    comment: "Это будет первый комментарий на этой странице",
-    likeCounter: 3,
-    likeButton: "",
-  },
-  {
-    name: "Варвара Н.",
-    date: "13.02.22 19:22",
-    comment: "Мне нравится как оформлена эта страница! ❤",
-    likeCounter: 75,
-    likeButton: "-active-like",
-  },
-];
+function fetchPromise() {
+   return fetch('https://webdev-hw-api.vercel.app/api/v1/lana-samoylova/comments',{
+    method:"GET",
+  }).then((response) =>{
+    
+    const jsonPromise = response.json();
+    jsonPromise.then((responseData) => {
+      const appComments = responseData.comments.map((comment) => {
+        const options = {
+          year: "2-digit",
+          month: "numeric",
+          day: "numeric",
+          timezone: "UTC",
+          hour: "numeric",
+          minute: "2-digit",
+          second: "2-digit",
+        };
+        return {
+          name:comment.author.name,
+          date: new Date(comment.date).toLocaleString("ru-RU", options),
+          comment: comment.text, 
+          likeCounter: comment.likes,
+          likeButton: false,
+        };
+      });
+      comments = appComments;
+      renderComments();
+    });
+  });
+}
+fetchPromise();
+
+
+let comments = [];
 
 //Рендерим comments
 const renderComments = () => {
@@ -46,7 +64,6 @@ const renderComments = () => {
   listElement.innerHTML = commentsHtml;
   likeButton ();
   answer();
-  
 }; 
 
 renderComments();
@@ -87,28 +104,12 @@ function checkParams() {
 // Добавление элемента в список по нажатию Enter 
 document.addEventListener("keyup",(event) => {
   if (event.code === "Enter") {
-    document.getElementById("add-button").click();
+    buttonElement.click();
   }
   checkParams();
 });
 
 buttonElement.addEventListener("click", () => {
-  const date = new Date();
-  let year = date.getFullYear() % 100;
-  let month = date.getMonth() + 1;
-  let day = date.getDay();
-  let hour = date.getHours();
-  let minute = date.getMinutes();
-  if (day < 10) {
-    day = "0" + day;
-  } if (hour < 10) {
-    hour = "0" + hour;
-  } if (minute < 10) {
-    minute = "0" + minute;
-  } if (month < 10) {
-    month = "0" + month;
-  }
-  const currentDate = day + '.' + month + '.' + year + '  ' + hour + ':' + minute;
 
   nameInputElement.classList.remove("error");
   commentTextAreaElement.classList.remove("error");
@@ -119,6 +120,17 @@ buttonElement.addEventListener("click", () => {
     commentTextAreaElement.classList.add("error");
     return;
   }
+  const options = {
+    year: "2-digit",
+    month: "numeric",
+    day: "numeric",
+    timezone: "UTC",
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+
+  const currentDate = new Date().toLocaleString("ru-RU", options);
 
   comments.push ({
     name: nameInputElement.value
@@ -136,8 +148,33 @@ buttonElement.addEventListener("click", () => {
     likeButton: "",
   });
 
+   //Добавляем комментарий
+    fetch('https://webdev-hw-api.vercel.app/api/v1/lana-samoylova/comments',{
+      method:"POST",
+      body: JSON.stringify ({
+        text: commentTextAreaElement.value,
+        name: nameInputElement.value,
+      }),
+    }).then((response) =>{
+      
+      const jsonPromise = response.json();
+      jsonPromise.then((responseData) => {
+        const appComments = responseData.comments.map((comment) => {
+          return {
+            name:comment.author.name,
+            date: new Date(comment.date).toLocaleString("ru-RU", options),
+            comment: comment.text, 
+            likeCounter: comment.likes,
+            likeButton: false,
+          };
+        });
+        comments = appComments;
+        fetchPromise();
+        renderComments();
+      });
+    });
+  
   renderComments();
-
   nameInputElement.value = ""; //очищает форму input после добавления комментария
   commentTextAreaElement.value = "";  //очищает форму textarea после добавления комментария 
 });  
