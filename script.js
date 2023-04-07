@@ -184,11 +184,9 @@ buttonElement.addEventListener("click", () => {
       return response.json();
     })
     .then(() => {
-      return fetchPromise();
-    })
-    delay(5000).then(() => {
       addedCommentElement.style.display = "none";
       InputFormElement.style.display = "flex";
+      return fetchPromise();
     })
     
   nameInputElement.value = ""; //очищает форму input после добавления комментария
