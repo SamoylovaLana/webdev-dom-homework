@@ -3,14 +3,20 @@ const listElement = document.getElementById("list");
 const nameInputElement = document.getElementById("name-input");
 const commentTextAreaElement = document.getElementById("comment-textarea");
 
+const startCommentElement = document.getElementById("start-comment");
+//Когда загружаются, приходят данные из API появляется строчка: "Пожалуйста подождите, комментарий загружается..."
+startCommentElement.textContent = "Пожалуйста подождите, комментарий загружается..."; 
+
+const addedCommentElement = document.getElementById("added-comment");
+const InputFormElement = document.getElementById("add");
 
 function fetchPromise() {
    return fetch('https://webdev-hw-api.vercel.app/api/v1/lana-samoylova/comments',{
     method:"GET",
-  }).then((response) =>{
-    
-    const jsonPromise = response.json();
-    jsonPromise.then((responseData) => {
+  }).then((response) => {
+    return response.json();
+  })
+    .then((responseData) => {
       const appComments = responseData.comments.map((comment) => {
         const options = {
           year: "2-digit",
@@ -31,11 +37,9 @@ function fetchPromise() {
       });
       comments = appComments;
       renderComments();
+      startCommentElement.style.display = "none";
     });
-  });
 }
-fetchPromise();
-
 
 let comments = [];
 
@@ -60,13 +64,23 @@ const renderComments = () => {
      </li>`
   })
   .join("");
-  
+
   listElement.innerHTML = commentsHtml;
   likeButton ();
   answer();
 }; 
 
+fetchPromise();
 renderComments();
+
+function delay(interval = 300) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, interval);
+  });
+}
+
 //«Оживляем» кнопку и счетчик лайков у каждого комментария.
 function likeButton () {
    //Находит все элементы с классом like-button в разметке
@@ -75,15 +89,20 @@ function likeButton () {
   for (const likeElement of likeElements) {
     //Добавляет обработчик клика на конкретный элемент в списке
     likeElement.addEventListener("click", (event) => {
-      if (likeElement.classList.contains("-active-like")) {
-        comments[likeElement.dataset.index].likeButton = "";
-        comments[likeElement.dataset.index].likeCounter -= 1;
-      } else {
-        comments[likeElement.dataset.index].likeButton = "-active-like";
-        comments[likeElement.dataset.index].likeCounter++;
-      }
       event.stopPropagation(); //останавливает всплытие события вверх по дереву
-      renderComments();
+      likeElement.classList.add("-loading-like");
+      delay(2000).then(() => {
+        if (likeElement.classList.contains("-active-like")) {
+          comments[likeElement.dataset.index].likeButton = "";
+          comments[likeElement.dataset.index].likeCounter -= 1;
+        } else {
+          comments[likeElement.dataset.index].likeButton = "-active-like";
+          comments[likeElement.dataset.index].likeCounter++;
+        }
+        likeElement.classList.remove("-loading-like");
+        
+        renderComments();
+      });  
     });
   }
 };
@@ -110,6 +129,11 @@ document.addEventListener("keyup",(event) => {
 });
 
 buttonElement.addEventListener("click", () => {
+  //Когда нажимаем "Написать" исчезает поле ввода и появляется строчка:"Комментарий добавляется..." 
+  addedCommentElement.style.display = "flex";
+  addedCommentElement.textContent = "Комментарий добавляется...";
+  InputFormElement.style.display = "none";
+  
 
   nameInputElement.classList.remove("error");
   commentTextAreaElement.classList.remove("error");
@@ -145,7 +169,7 @@ buttonElement.addEventListener("click", () => {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;"),
     likeCounter: 0,
-    likeButton: "",
+    likeButton: false,
   });
 
    //Добавляем комментарий
@@ -155,25 +179,16 @@ buttonElement.addEventListener("click", () => {
         text: commentTextAreaElement.value,
         name: nameInputElement.value,
       }),
-    }).then((response) =>{
-      
-      const jsonPromise = response.json();
-      jsonPromise.then((responseData) => {
-        const appComments = responseData.comments.map((comment) => {
-          return {
-            name:comment.author.name,
-            date: new Date(comment.date).toLocaleString("ru-RU", options),
-            comment: comment.text, 
-            likeCounter: comment.likes,
-            likeButton: false,
-          };
-        });
-        comments = appComments;
-        fetchPromise();
-        renderComments();
-      });
-    });
-  
+    })
+    .then((response) =>{
+      addedCommentElement.style.display = "none";
+      InputFormElement.style.display = "flex";
+      return response.json();
+    })
+    .then(() => {
+      return fetchPromise();
+    })
+
   renderComments();
   nameInputElement.value = ""; //очищает форму input после добавления комментария
   commentTextAreaElement.value = "";  //очищает форму textarea после добавления комментария 
