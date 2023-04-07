@@ -188,7 +188,7 @@ buttonElement.addEventListener("click", () => {
     .then(() => {
       return fetchPromise();
     })
-    delay(2000).then(() => {
+    delay(1000).then(() => {
       return renderComments();
     })
 
