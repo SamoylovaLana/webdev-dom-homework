@@ -188,8 +188,11 @@ buttonElement.addEventListener("click", () => {
     .then(() => {
       return fetchPromise();
     })
+    delay(5000).then(() => {
+      return renderComments();
+    })
 
-  renderComments();
+  ;
   nameInputElement.value = ""; //очищает форму input после добавления комментария
   commentTextAreaElement.value = "";  //очищает форму textarea после добавления комментария 
 });  
