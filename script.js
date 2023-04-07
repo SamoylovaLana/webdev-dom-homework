@@ -181,12 +181,14 @@ buttonElement.addEventListener("click", () => {
       }),
     })
     .then((response) =>{
-      addedCommentElement.style.display = "none";
-      InputFormElement.style.display = "flex";
       return response.json();
     })
     .then(() => {
       return fetchPromise();
+    })
+    delay(5000).then(() => {
+      addedCommentElement.style.display = "none";
+      InputFormElement.style.display = "flex";
     })
     
   nameInputElement.value = ""; //очищает форму input после добавления комментария
