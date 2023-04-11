@@ -13,32 +13,33 @@ const InputFormElement = document.getElementById("add");
 function fetchPromise() {
    return fetch('https://webdev-hw-api.vercel.app/api/v1/lana-samoylova/comments',{
     method:"GET",
-  }).then((response) => {
+  })
+  .then((response) => {
     return response.json();
   })
-    .then((responseData) => {
-      const appComments = responseData.comments.map((comment) => {
-        const options = {
-          year: "2-digit",
-          month: "numeric",
-          day: "numeric",
-          timezone: "UTC",
-          hour: "numeric",
-          minute: "2-digit",
-          second: "2-digit",
-        };
-        return {
-          name:comment.author.name,
-          date: new Date(comment.date).toLocaleString("ru-RU", options),
-          comment: comment.text, 
-          likeCounter: comment.likes,
-          likeButton: false,
-        };
-      });
-      comments = appComments;
-      renderComments();
-      startCommentElement.style.display = "none";
+  .then((responseData) => {
+    const appComments = responseData.comments.map((comment) => {
+      const options = {
+        year: "2-digit",
+        month: "numeric",
+        day: "numeric",
+        timezone: "UTC",
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+      };
+      return {
+        name:comment.author.name,
+        date: new Date(comment.date).toLocaleString("ru-RU", options),
+        comment: comment.text, 
+        likeCounter: comment.likes,
+        likeButton: false,
+      };
     });
+    comments = appComments;
+    renderComments();
+    startCommentElement.style.display = "none";
+  });
 }
 
 let comments = [];
@@ -134,7 +135,6 @@ buttonElement.addEventListener("click", () => {
   addedCommentElement.textContent = "Комментарий добавляется...";
   InputFormElement.style.display = "none";
   
-
   nameInputElement.classList.remove("error");
   commentTextAreaElement.classList.remove("error");
   if (nameInputElement.value === '') {
@@ -184,9 +184,11 @@ buttonElement.addEventListener("click", () => {
       return response.json();
     })
     .then(() => {
+      return fetchPromise();
+    })
+    .then(() => {
       addedCommentElement.style.display = "none";
       InputFormElement.style.display = "flex";
-      return fetchPromise();
     })
     
   nameInputElement.value = ""; //очищает форму input после добавления комментария
