@@ -186,13 +186,13 @@ buttonElement.addEventListener("click", () => {
         return response.json();  
       }
       else if (response.status === 400) { //комментарий короче 3 символов
-        throw new Error ("400");
+        throw new Error ("Имя или комментарий короче 3 символов");
       }
       else if (response.status === 500) { //упал сервер
-        throw new Error ("500");
+        throw new Error ("Упал сервер");
       } 
       else {
-        throw new Error ("сломался интернет");
+        throw new Error ("Сломался интернет");
       }
     })
     .then(() => {
@@ -205,10 +205,10 @@ buttonElement.addEventListener("click", () => {
       commentTextAreaElement.value = "";  //очищает форму textarea после добавления комментария 
     })
     .catch((error) => {
-      if (error.message === '400') {
+      if (error.message === "Имя или комментарий короче 3 символов") {
         alert("Имя и комментарий должны быть не короче 3 символов");
       }
-      else if (error.message === '500') {
+      else if (error.message === 'Упал сервер') {
         buttonElement.click(); // клик на ввод
       } 
       else {
