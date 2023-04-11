@@ -123,7 +123,7 @@ function checkParams() {
 
 // Добавление элемента в список по нажатию Enter 
 document.addEventListener("keyup",(event) => {
-  if (event.code === "Enter") {
+  if (event.code === "Enter" || event.code === "NumpadEnter") {
     buttonElement.click();
   }
   checkParams();
@@ -178,10 +178,19 @@ buttonElement.addEventListener("click", () => {
       body: JSON.stringify ({
         text: commentTextAreaElement.value,
         name: nameInputElement.value,
+        forceError: true, //сервер через раз будет падать с 500 ошибкой
       }),
     })
     .then((response) =>{
-      return response.json();
+      if (response.status === 201) {
+        return response.json();  
+      }
+      if (response.status === 400) {
+        throw new Error ("400");
+      }
+      if (response.status === 500) {
+        throw new Error ("500");
+      } 
     })
     .then(() => {
       return fetchPromise();
@@ -189,10 +198,23 @@ buttonElement.addEventListener("click", () => {
     .then(() => {
       addedCommentElement.style.display = "none";
       InputFormElement.style.display = "flex";
+      nameInputElement.value = ""; //очищает форму input после добавления комментария
+      commentTextAreaElement.value = "";  //очищает форму textarea после добавления комментария 
     })
-    
-  nameInputElement.value = ""; //очищает форму input после добавления комментария
-  commentTextAreaElement.value = "";  //очищает форму textarea после добавления комментария 
+    .catch((error) => {
+      if (error.message === '400') {
+        alert("Имя и комментарий должны быть не короче 3 символов");
+      }
+      if (error.message === '500') {
+        //alert("Кажется, у вас сломался интернет, попробуйте позже");
+        buttonElement.click(); // клик на ввод
+      } 
+      // Отправлять в систему сбора ошибок
+      console.warn(error);
+      addedCommentElement.style.display = "none";
+      InputFormElement.style.display = "flex";
+    })
+  
 });  
 
 //Сценарий «Ответы на комментарии»
