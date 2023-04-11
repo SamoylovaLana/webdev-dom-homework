@@ -182,15 +182,18 @@ buttonElement.addEventListener("click", () => {
       }),
     })
     .then((response) =>{
-      if (response.status === 201) {
+      if (response.status === 201) { 
         return response.json();  
       }
-      if (response.status === 400) {
+      else if (response.status === 400) { //комментарий короче 3 символов
         throw new Error ("400");
       }
-      if (response.status === 500) {
+      else if (response.status === 500) { //упал сервер
         throw new Error ("500");
       } 
+      else {
+        throw new Error ("сломался интернет");
+      }
     })
     .then(() => {
       return fetchPromise();
@@ -205,16 +208,17 @@ buttonElement.addEventListener("click", () => {
       if (error.message === '400') {
         alert("Имя и комментарий должны быть не короче 3 символов");
       }
-      if (error.message === '500') {
-        //alert("Кажется, у вас сломался интернет, попробуйте позже");
+      else if (error.message === '500') {
         buttonElement.click(); // клик на ввод
       } 
+      else {
+        alert("Кажется, у вас сломался интернет, попробуйте позже");
+      }
       // Отправлять в систему сбора ошибок
       console.warn(error);
       addedCommentElement.style.display = "none";
       InputFormElement.style.display = "flex";
     })
-  
 });  
 
 //Сценарий «Ответы на комментарии»
