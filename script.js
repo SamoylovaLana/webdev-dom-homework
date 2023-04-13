@@ -123,7 +123,7 @@ function checkParams() {
 
 // Добавление элемента в список по нажатию Enter 
 document.addEventListener("keyup",(event) => {
-  if (event.code === "Enter") {
+  if (event.code === "Enter" || event.code === "NumpadEnter") {
     buttonElement.click();
   }
   checkParams();
@@ -178,10 +178,22 @@ buttonElement.addEventListener("click", () => {
       body: JSON.stringify ({
         text: commentTextAreaElement.value,
         name: nameInputElement.value,
+        forceError: true, //сервер через раз будет падать с 500 ошибкой
       }),
     })
     .then((response) =>{
-      return response.json();
+      if (response.status === 201) { 
+        return response.json();  
+      }
+      else if (response.status === 400) {
+        throw new Error ("Имя и комментарий должны быть не короче 3 символов");
+      }
+      else if (response.status === 500) { 
+        throw new Error ("Упал сервер");
+      } 
+      else {
+        throw new Error ("Сломался интернет");
+      }
     })
     .then(() => {
       return fetchPromise();
@@ -189,10 +201,24 @@ buttonElement.addEventListener("click", () => {
     .then(() => {
       addedCommentElement.style.display = "none";
       InputFormElement.style.display = "flex";
+      nameInputElement.value = ""; //очищает форму input после добавления комментария
+      commentTextAreaElement.value = "";  //очищает форму textarea после добавления комментария 
     })
-    
-  nameInputElement.value = ""; //очищает форму input после добавления комментария
-  commentTextAreaElement.value = "";  //очищает форму textarea после добавления комментария 
+    .catch((error) => {
+      if (error.message === "Имя и комментарий должны быть не короче 3 символов") {
+        alert(error.message);
+      }
+      else if (error.message === 'Упал сервер') {
+        buttonElement.click(); // клик на ввод
+      } 
+      else {
+        alert("Кажется, у вас сломался интернет, попробуйте позже");
+      }
+      // Отправлять в систему сбора ошибок
+      console.warn(error);
+      addedCommentElement.style.display = "none";
+      InputFormElement.style.display = "flex";
+    })
 });  
 
 //Сценарий «Ответы на комментарии»
