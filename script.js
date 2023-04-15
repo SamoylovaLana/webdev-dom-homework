@@ -56,7 +56,7 @@ function delay(interval = 300) {
 }
 
 //«Оживляем» кнопку и счетчик лайков у каждого комментария.
-function likeButton () {
+function likeButton() {
    //Находит все элементы с классом like-button в разметке
   const likeElements = document.querySelectorAll('.like-button');
     //Цикл for проходит по каждому элементу в списке
@@ -76,6 +76,7 @@ function likeButton () {
         likeElement.classList.remove("-loading-like");
         
         renderComments(comments, listElement, getListComments);
+        likeButton();
       });  
     });
   }
