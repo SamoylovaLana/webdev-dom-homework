@@ -1,22 +1,20 @@
+import { getListComments } from "./listComments.js";
+import { renderComments } from "./render.js";
+import { fetchGetApi, fetchPostApi } from "./api.js";
+
 const buttonElement = document.getElementById("add-button");
 const listElement = document.getElementById("list");
 const nameInputElement = document.getElementById("name-input");
 const commentTextAreaElement = document.getElementById("comment-textarea");
 
 const startCommentElement = document.getElementById("start-comment");
-//Когда загружаются, приходят данные из API появляется строчка: "Пожалуйста подождите, комментарий загружается..."
-startCommentElement.textContent = "Пожалуйста подождите, комментарий загружается..."; 
+startCommentElement.textContent = "Пожалуйста подождите, комментарий загружается..."; //Когда загружаются данные из API появляется строчка: "Пожалуйста подождите, комментарий загружается..."
 
 const addedCommentElement = document.getElementById("added-comment");
 const InputFormElement = document.getElementById("add");
 
 function fetchPromise() {
-   return fetch('https://webdev-hw-api.vercel.app/api/v1/lana-samoylova/comments',{
-    method:"GET",
-  })
-  .then((response) => {
-    return response.json();
-  })
+  fetchGetApi()
   .then((responseData) => {
     const appComments = responseData.comments.map((comment) => {
       const options = {
@@ -37,42 +35,16 @@ function fetchPromise() {
       };
     });
     comments = appComments;
-    renderComments();
+    
+    renderComments(comments, listElement, getListComments);
     startCommentElement.style.display = "none";
+    likeButton();
+    answer();
   });
 }
+fetchPromise();
 
 let comments = [];
-
-//Рендерим comments
-const renderComments = () => {
-  const commentsHtml = comments
-  .map((comment, index) => {
-    return `<li class="comment" data-index ='${index}' >
-      <div class="comment-header">
-         <div>${comment.name}</div>
-         <div>${comment.date}</div>
-         </div>
-         <div class="comment-body">
-           <div class="comment-text">${comment.comment}</div>
-         </div>
-         <div class="comment-footer">
-           <div class="likes">
-           <span class="likes-counter">${comment.likeCounter}</span>
-           <button data-index ='${index}'class="like-button ${comment.likeButton}"></button>
-         </div>
-      </div>
-     </li>`
-  })
-  .join("");
-
-  listElement.innerHTML = commentsHtml;
-  likeButton ();
-  answer();
-}; 
-
-fetchPromise();
-renderComments();
 
 function delay(interval = 300) {
   return new Promise((resolve) => {
@@ -83,7 +55,7 @@ function delay(interval = 300) {
 }
 
 //«Оживляем» кнопку и счетчик лайков у каждого комментария.
-function likeButton () {
+function likeButton() {
    //Находит все элементы с классом like-button в разметке
   const likeElements = document.querySelectorAll('.like-button');
     //Цикл for проходит по каждому элементу в списке
@@ -102,7 +74,9 @@ function likeButton () {
         }
         likeElement.classList.remove("-loading-like");
         
-        renderComments();
+        renderComments(comments, listElement, getListComments);
+        likeButton();
+        answer();
       });  
     });
   }
@@ -144,17 +118,6 @@ buttonElement.addEventListener("click", () => {
     commentTextAreaElement.classList.add("error");
     return;
   }
-  const options = {
-    year: "2-digit",
-    month: "numeric",
-    day: "numeric",
-    timezone: "UTC",
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-  };
-
-  const currentDate = new Date().toLocaleString("ru-RU", options);
 
   comments.push ({
     name: nameInputElement.value
@@ -162,7 +125,7 @@ buttonElement.addEventListener("click", () => {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;"),
-    date: currentDate,
+    date: new Date(),
     comment: commentTextAreaElement.value
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
@@ -173,14 +136,7 @@ buttonElement.addEventListener("click", () => {
   });
 
    //Добавляем комментарий
-    fetch('https://webdev-hw-api.vercel.app/api/v1/lana-samoylova/comments',{
-      method:"POST",
-      body: JSON.stringify ({
-        text: commentTextAreaElement.value,
-        name: nameInputElement.value,
-        forceError: true, //сервер через раз будет падать с 500 ошибкой
-      }),
-    })
+    fetchPostApi(commentTextAreaElement.value, nameInputElement.value)
     .then((response) =>{
       if (response.status === 201) { 
         return response.json();  
@@ -230,3 +186,4 @@ function answer() {
    });
  }
 };
+answer();
