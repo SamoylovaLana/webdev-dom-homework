@@ -8,8 +8,7 @@ const nameInputElement = document.getElementById("name-input");
 const commentTextAreaElement = document.getElementById("comment-textarea");
 
 const startCommentElement = document.getElementById("start-comment");
-//Когда загружаются, приходят данные из API появляется строчка: "Пожалуйста подождите, комментарий загружается..."
-startCommentElement.textContent = "Пожалуйста подождите, комментарий загружается..."; 
+startCommentElement.textContent = "Пожалуйста подождите, комментарий загружается..."; //Когда загружаются данные из API появляется строчка: "Пожалуйста подождите, комментарий загружается..."
 
 const addedCommentElement = document.getElementById("added-comment");
 const InputFormElement = document.getElementById("add");
@@ -77,6 +76,7 @@ function likeButton() {
         
         renderComments(comments, listElement, getListComments);
         likeButton();
+        answer();
       });  
     });
   }
@@ -118,17 +118,6 @@ buttonElement.addEventListener("click", () => {
     commentTextAreaElement.classList.add("error");
     return;
   }
-  const options = {
-    year: "2-digit",
-    month: "numeric",
-    day: "numeric",
-    timezone: "UTC",
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-  };
-
-  const currentDate = new Date().toLocaleString("ru-RU", options);
 
   comments.push ({
     name: nameInputElement.value
@@ -136,7 +125,7 @@ buttonElement.addEventListener("click", () => {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;"),
-    date: currentDate,
+    date: new Date(),
     comment: commentTextAreaElement.value
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
@@ -197,3 +186,4 @@ function answer() {
    });
  }
 };
+answer();
