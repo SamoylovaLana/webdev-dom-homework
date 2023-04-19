@@ -1,4 +1,4 @@
-export const getListComments = (comment, index) => {
+/*export const getListComments = (comment, index) => {
     return `<li class="comment" data-index ='${index}' >
     <div class="comment-header">
        <div>${comment.name}</div>
@@ -14,4 +14,4 @@ export const getListComments = (comment, index) => {
        </div>
     </div>
    </li>`;
-  };
+  };*/

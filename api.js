@@ -1,4 +1,4 @@
-export function fetchGetApi() {
+/*export function fetchGetApi() {
   return fetch('https://webdev-hw-api.vercel.app/api/v1/lana-samoylova/comments',{
     method:"GET",
   })
@@ -16,4 +16,4 @@ export function fetchPostApi(textValue, nameValue) {
       name: nameValue,
     }),
   });
-}
+}*/
