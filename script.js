@@ -13,9 +13,16 @@ startCommentElement.textContent = "Пожалуйста подождите, ко
 const addedCommentElement = document.getElementById("added-comment");
 const InputFormElement = document.getElementById("add");
 
+const host = "https://webdev-hw-api.vercel.app/api/v2/lanaSamoylova/comments";
+
+const token = "Bearer bgc0b8awbwas6g5g5k5o5s5w606g37w3cc3bo3b83k39s3co3c83c03ck";
+
 function fetchPromise() {
-   return fetch('https://webdev-hw-api.vercel.app/api/v1/lana-samoylova/comments',{
+   return fetch(host,{
     method:"GET",
+    headers: {
+      Authorization: token,
+    },
   })
   .then((response) => {
     return response.json();
@@ -165,12 +172,15 @@ buttonElement.addEventListener("click", () => {
   });
 
    //Добавляем комментарий
-    fetch('https://webdev-hw-api.vercel.app/api/v1/lana-samoylova/comments',{
+    fetch(host,{
       method:"POST",
       body: JSON.stringify ({
         text: commentTextAreaElement.value,
         name: nameInputElement.value,
       }),
+      headers: {
+        Authorization: token,
+      },
     })
     .then((response) =>{
       if (response.status === 201) { 
@@ -178,6 +188,9 @@ buttonElement.addEventListener("click", () => {
       }
       else if (response.status === 400) {
         throw new Error ("Имя и комментарий должны быть не короче 3 символов");
+      }
+      else if (response.status === 401) {
+        throw new Error("Нет авторизации");
       }
       else if (response.status === 500) { 
         throw new Error ("Упал сервер");
@@ -197,6 +210,9 @@ buttonElement.addEventListener("click", () => {
     })
     .catch((error) => {
       if (error.message === "Имя и комментарий должны быть не короче 3 символов") {
+        alert(error.message);
+      }
+      else if (error.message === "Нет авторизации") {
         alert(error.message);
       }
       else if (error.message === 'Упал сервер') {
