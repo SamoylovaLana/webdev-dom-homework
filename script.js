@@ -3,12 +3,10 @@ import { renderComments } from "./render.js";
 import { fetchGetApi, fetchPostApi } from "./api.js";*/
 
 const buttonElement = document.getElementById("add-button");
-const listElement = document.getElementById("list");
-const nameInputElement = document.getElementById("name-input");
-const commentTextAreaElement = document.getElementById("comment-textarea");
+  const listElement = document.getElementById("list");
+  const nameInputElement = document.getElementById("name-input");
+  const commentTextAreaElement = document.getElementById("comment-textarea");
 
-const startCommentElement = document.getElementById("start-comment");
-startCommentElement.textContent = "Пожалуйста подождите, комментарий загружается..."; //Когда загружаются, приходят данные из API появляется строчка: "Пожалуйста подождите, комментарий загружается..."
 
 const addedCommentElement = document.getElementById("added-comment");
 const InputFormElement = document.getElementById("add");
@@ -44,7 +42,7 @@ function fetchPromise() {
         comment: comment.text, 
         likeCounter: comment.likes,
         likeButton: false,
-      };
+      }
     });
     comments = appComments;
     renderComments();
@@ -56,6 +54,8 @@ let comments = [];
 
 //Рендерим comments
 const renderComments = () => {
+  const appEl = document.getElementById("app");
+ 
   const commentsHtml = comments
   .map((comment, index) => {
     return `<li class="comment" data-index ='${index}' >
@@ -75,11 +75,41 @@ const renderComments = () => {
      </li>`
   })
   .join("");
+  
 
-  listElement.innerHTML = commentsHtml;
-  likeButton ();
+  appEl.innerHTML = appHtml;
+  
+
+  const appHtml = `
+  <div class="container">
+      <p id="start-comment"></p>
+      <div>Форма входа</div>
+        <input id="login-input" type="text" class="add-form-text" placeholder="Введите логин">
+        <input id="password-input" class="add-form-text"  type="password" placeholder="Введите пароль">
+        <button id="enterButton" class="add-form-button">Войти</button>
+        <button id="registrationButton" class="add-form-button">Зарегистрироваться</button>
+     </div>
+     <ul id="list" class="comments">
+       ${commentsHtml}
+     </ul>
+     <p id="added-comment"></p>
+     <div class="add-form">
+        <div id="add" class="add-form">
+           <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+           <textarea id="comment-textarea" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+           rows="4"></textarea>
+           <div class="add-form-row">
+           <button id="add-button" class="add-form-button">Написать</button>
+        </div>
+     </div>
+  </div>`
+  
+  const startCommentElement = document.getElementById("start-comment");
+  startCommentElement.textContent = "Пожалуйста подождите, комментарий загружается..."; //Когда загружаются, приходят данные из API появляется строчка: "Пожалуйста подождите, комментарий загружается..."
+
+  likeButton();
   answer();
-}; 
+};
 
 fetchPromise();
 renderComments();
@@ -140,93 +170,96 @@ document.addEventListener("keyup",(event) => {
 });
 
 buttonElement.addEventListener("click", () => {
-  //Когда нажимаем "Написать" исчезает поле ввода и появляется строчка:"Комментарий добавляется..." 
-  addedCommentElement.style.display = "flex";
-  addedCommentElement.textContent = "Комментарий добавляется...";
-  InputFormElement.style.display = "none";
-  
-  nameInputElement.classList.remove("error");
-  commentTextAreaElement.classList.remove("error");
-  if (nameInputElement.value === '') {
-    nameInputElement.classList.add("error");
-  return;
-  } if (commentTextAreaElement.value === '') {
-    commentTextAreaElement.classList.add("error");
+    //Когда нажимаем "Написать" исчезает поле ввода и появляется строчка:"Комментарий добавляется..." 
+    addedCommentElement.style.display = "flex";
+    addedCommentElement.textContent = "Комментарий добавляется...";
+    InputFormElement.style.display = "none";
+    
+    nameInputElement.classList.remove("error");
+    commentTextAreaElement.classList.remove("error");
+    if (nameInputElement.value === '') {
+      nameInputElement.classList.add("error");
     return;
-  }
-
-  comments.push ({
-    name: nameInputElement.value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;"),
-    date: new Date(),
-    comment: commentTextAreaElement.value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;"),
-    likeCounter: 0,
-    likeButton: false,
-  });
-
-   //Добавляем комментарий
-    fetch(host,{
-      method:"POST",
-      body: JSON.stringify ({
-        text: commentTextAreaElement.value,
-        name: nameInputElement.value,
-      }),
-      headers: {
-        Authorization: token,
-      },
-    })
-    .then((response) =>{
-      if (response.status === 201) { 
-        return response.json();  
-      }
-      else if (response.status === 400) {
-        throw new Error ("Имя и комментарий должны быть не короче 3 символов");
-      }
-      else if (response.status === 401) {
-        throw new Error("Нет авторизации");
-      }
-      else if (response.status === 500) { 
-        throw new Error ("Упал сервер");
-      } 
-      else {
-        throw new Error ("Сломался интернет");
-      }
-    })
-    .then(() => {
-      return fetchPromise();
-    })
-    .then(() => {
-      addedCommentElement.style.display = "none";
-      InputFormElement.style.display = "flex";
-      nameInputElement.value = ""; //очищает форму input после добавления комментария
-      commentTextAreaElement.value = "";  //очищает форму textarea после добавления комментария 
-    })
-    .catch((error) => {
-      if (error.message === "Имя и комментарий должны быть не короче 3 символов") {
-        alert(error.message);
-      }
-      else if (error.message === "Нет авторизации") {
-        alert(error.message);
-      }
-      else if (error.message === 'Упал сервер') {
-        buttonElement.click(); // клик на ввод
-      } 
-      else {
-        alert("Кажется, у вас сломался интернет, попробуйте позже");
-      }
-      // Отправлять в систему сбора ошибок
-      console.warn(error);
-      addedCommentElement.style.display = "none";
-      InputFormElement.style.display = "flex";
-    })
+    } if (commentTextAreaElement.value === '') {
+      commentTextAreaElement.classList.add("error");
+      return;
+    }
+  
+    comments.push ({
+      name: nameInputElement.value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;"),
+      date: new Date(),
+      comment: commentTextAreaElement.value
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;"),
+      likeCounter: 0,
+      likeButton: false,
+    });
+  
+     //Добавляем комментарий
+      fetch(host,{
+        method:"POST",
+        body: JSON.stringify ({
+          text: commentTextAreaElement.value,
+          name: nameInputElement.value,
+        }),
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) =>{
+        if (response.status === 201) { 
+          return response.json();  
+        }
+        else if (response.status === 400) {
+          throw new Error ("Имя и комментарий должны быть не короче 3 символов");
+        }
+        else if (response.status === 401) {
+          throw new Error("Нет авторизации");
+        }
+        else if (response.status === 500) { 
+          throw new Error ("Упал сервер");
+        } 
+        else {
+          throw new Error ("Сломался интернет");
+        }
+      })
+      .then(() => {
+        return fetchPromise();
+      })
+      .then(() => {
+        addedCommentElement.style.display = "none";
+        InputFormElement.style.display = "flex";
+        nameInputElement.value = ""; //очищает форму input после добавления комментария
+        commentTextAreaElement.value = "";  //очищает форму textarea после добавления комментария 
+      })
+      .catch((error) => {
+        if (error.message === "Имя и комментарий должны быть не короче 3 символов") {
+          alert(error.message);
+        }
+        else if (error.message === "Нет авторизации") {
+          alert(error.message);
+        }
+        else if (error.message === 'Упал сервер') {
+          buttonElement.click(); // клик на ввод
+        } 
+        else {
+          alert("Кажется, у вас сломался интернет, попробуйте позже");
+        }
+        // Отправлять в систему сбора ошибок
+        console.warn(error);
+        addedCommentElement.style.display = "none";
+        InputFormElement.style.display = "flex";  
+      })
 });  
+ 
+
+
 
 //Сценарий «Ответы на комментарии»
 function answer() {
