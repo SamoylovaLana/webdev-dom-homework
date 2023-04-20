@@ -3,9 +3,9 @@ import { renderComments } from "./render.js";
 import { fetchGetApi, fetchPostApi } from "./api.js";*/
 
 const buttonElement = document.getElementById("add-button");
-  const listElement = document.getElementById("list");
-  const nameInputElement = document.getElementById("name-input");
-  const commentTextAreaElement = document.getElementById("comment-textarea");
+const listElement = document.getElementById("list");
+const nameInputElement = document.getElementById("name-input");
+const commentTextAreaElement = document.getElementById("comment-textarea");
 
 
 const addedCommentElement = document.getElementById("added-comment");
@@ -23,6 +23,8 @@ function fetchPromise() {
     },
   })
   .then((response) => {
+    const startCommentElement = document.getElementById("start-comment");
+    startCommentElement.textContent = "Пожалуйста подождите, комментарий загружается..."; //Когда загружаются, приходят данные из API появляется строчка: "Пожалуйста подождите, комментарий загружается..."
     return response.json();
   })
   .then((responseData) => {
@@ -42,10 +44,11 @@ function fetchPromise() {
         comment: comment.text, 
         likeCounter: comment.likes,
         likeButton: false,
+        token,
       }
     });
     comments = appComments;
-    renderComments();
+    renderComments(listElement);
     startCommentElement.style.display = "none";
   });
 }
@@ -54,8 +57,7 @@ let comments = [];
 
 //Рендерим comments
 const renderComments = () => {
-  const appEl = document.getElementById("app");
- 
+  
   const commentsHtml = comments
   .map((comment, index) => {
     return `<li class="comment" data-index ='${index}' >
@@ -76,37 +78,35 @@ const renderComments = () => {
   })
   .join("");
   
-
-  appEl.innerHTML = appHtml;
+  const appEl = document.getElementById("app");
   
 
   const appHtml = `
-  <div class="container">
-      <p id="start-comment"></p>
-      <div>Форма входа</div>
+   <div class="container">
+     <p id="start-comment"></p>
+     <ul id="list" class="comments">
+       ${commentsHtml}
+     </ul>
+     <div class="add-form">
+        <div>Форма входа</div>
         <input id="login-input" type="text" class="add-form-text" placeholder="Введите логин">
         <input id="password-input" class="add-form-text"  type="password" placeholder="Введите пароль">
         <button id="enterButton" class="add-form-button">Войти</button>
         <button id="registrationButton" class="add-form-button">Зарегистрироваться</button>
      </div>
-     <ul id="list" class="comments">
-       ${commentsHtml}
-     </ul>
      <p id="added-comment"></p>
-     <div class="add-form">
-        <div id="add" class="add-form">
-           <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-           <textarea id="comment-textarea" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-           rows="4"></textarea>
-           <div class="add-form-row">
-           <button id="add-button" class="add-form-button">Написать</button>
-        </div>
+     <div id="add" class="add-form">
+        <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+        <textarea id="comment-textarea" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
+        rows="4"></textarea>
+        <div class="add-form-row">
+        <button id="add-button" class="add-form-button">Написать</button>
      </div>
-  </div>`
-  
-  const startCommentElement = document.getElementById("start-comment");
-  startCommentElement.textContent = "Пожалуйста подождите, комментарий загружается..."; //Когда загружаются, приходят данные из API появляется строчка: "Пожалуйста подождите, комментарий загружается..."
+   </div>`
 
+  appEl.innerHTML = appHtml;
+  
+  
   likeButton();
   answer();
 };

@@ -1,9 +1,8 @@
-*/ body {
+ body {
     margin: 0;
   }
 
-  .container, 
-  .app {
+  .container {
     font-family: Helvetica;
     color: #ffffff;
     display: flex;
