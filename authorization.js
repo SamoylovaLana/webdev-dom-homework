@@ -25,7 +25,7 @@ export function renderLoginComponent({
       <div class="comment-footer">
         <div class="likes">
           <span class="likes-counter">${user.likes}</span>
-          <button data-index="${index}"  class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
+          <button data-index="${index}" class="like-button ${user.isLiked}"></button>
         </div>
       </div>
     </li>`

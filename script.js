@@ -1,7 +1,7 @@
 import { getCommentsList, fetchPostApi } from "./api.js";
 import {getDate, safety, delay, back} from "./data.js"
 import { renderLoginComponent} from "./authorization.js";
-import {getListComments} from "./listComments.js";
+//import {getListComments} from "./listComments.js";
  let token = null;
  let comments = [];
  let name;
@@ -35,7 +35,21 @@ export const renderComments = () => {
   
   const commentsHtml =
   comments.map((user, index,) => {
-    getListComments
+    return `<li class="comment" data-index ='${index}'>
+    <div class="comment-header">
+      <div>${user.author.name}</div>
+      <div>${getDate(user.date)}</div>
+    </div>
+    <div class="comment-body" data-comments="${index}" >
+   <div class ="comment-text"> ${user.text} </div>
+    </div>
+    <div class="comment-footer">
+      <div class="likes">
+        <span class="likes-counter">${user.likes}</span>
+        <button  data-index="${index}" class="like-button ${user.isLiked}"></button>
+      </div>
+    </div>
+  </li>`
   }).join("");
 
   const appHtml = `
@@ -141,10 +155,10 @@ export const renderComments = () => {
         likeElement.classList.add('-loading-like')
         delay(2000).then(()=> {
           if (!comments[likeElement.dataset.index].isLiked) {
-            comments[likeElement.dataset.index].isLiked = false;
+            comments[likeElement.dataset.index].isLiked = "";
             comments[likeElement.dataset.index].likes ++;
           } else {
-            comments[likeElement.dataset.index].isLiked = true;
+            comments[likeElement.dataset.index].isLiked = '-loading-like';
             comments[likeElement.dataset.index].likes -= 1;
           }
             likeElement.classList.remove("-loading-like");
