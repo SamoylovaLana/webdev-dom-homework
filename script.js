@@ -154,23 +154,22 @@ export const renderComments = () => {
         event.stopPropagation(); //останавливает всплытие события вверх по дереву
         likeElement.classList.add('-loading-like')
         delay(2000).then(()=> {
-          if (likeElement.classList.contains("-active-like")) {
-            comments[likeElement.dataset.index].isLiked = "";
+          if (!comments[likeElement.dataset.index].isLiked) {
+            comments[likeElement.dataset.index].isLiked = false;
             comments[likeElement.dataset.index].likes -= 1;
           } else {
-            comments[likeElement.dataset.index].isLiked = "-active-like";
+            comments[likeElement.dataset.index].isLiked = true;
             comments[likeElement.dataset.index].likes ++;
           }
             likeElement.classList.remove("-loading-like");
-              
+            
             renderComments();
-        });
+        })
       });
     }
   }
-  likeButton();
- 
-  // «Ответы на комментарии»
+  
+  // «Ответ на комментарий»
   function answer() {
    const commentElements = document.querySelectorAll('.comment');
    for (const commentElement of commentElements) {
@@ -180,6 +179,7 @@ export const renderComments = () => {
     }
   };
   answer();
+  likeButton();
 };
 
 renderComments();
