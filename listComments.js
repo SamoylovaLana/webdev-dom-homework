@@ -1,4 +1,4 @@
-import {getDate} from "./data.js"
+/*import {getDate} from "./data.js"
 
 export const getListComments = (user, index) => {
   return `<li class="comment" data-index ='${index}'>
@@ -16,4 +16,4 @@ export const getListComments = (user, index) => {
     </div>
   </div>
   </li>`
-  };
+  };*/
