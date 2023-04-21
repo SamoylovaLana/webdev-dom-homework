@@ -46,7 +46,7 @@ export const renderComments = () => {
     <div class="comment-footer">
       <div class="likes">
         <span class="likes-counter">${user.likes}</span>
-        <button  data-heart="${index}" class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
+        <button  data-index="${index}" class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
       </div>
     </div>
   </li>`
@@ -156,10 +156,10 @@ export const renderComments = () => {
         delay(2000).then(()=> {
           if (!comments[likeElement.dataset.index].isLiked) {
             comments[likeElement.dataset.index].isLiked = false;
-            comments[likeElement.dataset.index].likes -= 1;
+            comments[likeElement.dataset.index].likes ++;
           } else {
             comments[likeElement.dataset.index].isLiked = true;
-            comments[likeElement.dataset.index].likes ++;
+            comments[likeElement.dataset.index].likes -= 1;
           }
             likeElement.classList.remove("-loading-like");
             
