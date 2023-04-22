@@ -101,7 +101,7 @@ export const renderComments = () => {
         commentTextAreaElement.value = "";  //очищает форму textarea после добавления комментария 
       })
       .catch((error) => {
-        if (error.message === "Имя и комментарий должны быть не короче 3 символов") {
+        if (error.message === "Имя и комментарий не должны быть короче 3х символов") {
           alert(error.message);
         }
         else if (error.message === "Нет авторизации") {
@@ -158,7 +158,7 @@ export const renderComments = () => {
             comments[likeElement.dataset.index].isLiked = "";
             comments[likeElement.dataset.index].likes ++;
           } else {
-            comments[likeElement.dataset.index].isLiked = '-loading-like';
+            comments[likeElement.dataset.index].isLiked = "-loading-like";
             comments[likeElement.dataset.index].likes -= 1;
           }
             likeElement.classList.remove("-loading-like");

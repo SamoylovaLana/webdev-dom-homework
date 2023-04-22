@@ -34,7 +34,7 @@ export function fetchPostApi({ name, text, date, forceError, token }) {
       return response.json();  
     }
     else if (response.status === 400) {
-      throw new Error ("Имя и комментарий должны быть не короче 3 символов");
+      throw new Error ("Имя и комментарий не должны быть короче 3х символов");
     }
     else if (response.status === 401) {
       throw new Error("Нет авторизации");
