@@ -1,33 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Проект "Комменты"</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div class="container">
-    <p id="start-comment"></p>
-    <ul id="list" class="comments">
-      <!--Список рендерится из JS -->
-    </ul>
-    <div>
-      <p id="added-comment"></p>
-    </div>
-    <div id="add" class="add-form">
-      <input id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-      <textarea id="comment-textarea" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-        rows="4"></textarea>
-      <div class="add-form-row">
-        <button id="add-button" class="add-form-button">Написать</button>
-      </div>
-      <!--<div class="add-form-row">
-        <button  data-index ='${index}' id="delete-button" class="add-form-button">Удалить последний комментарий</button>
-      </div>-->
-    </div>
-  </div>
-  <script type="module" src="script.js"></script>
-</body>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Проект "Комменты"</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div id="app"></div>
+  </body>
+
+  <script type = 'module' src="script.js"></script>
 </html>
