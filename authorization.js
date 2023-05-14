@@ -1,4 +1,4 @@
-import { getDate } from "./data.js";
+import { format } from "date-fns";
 import {loginUser, registerUser} from './api.js';
 
 export function renderLoginComponent({
@@ -17,7 +17,7 @@ export function renderLoginComponent({
       return `<li class="comment" data-index ='${index}'>
       <div class="comment-header">
         <div>${user.author.name}</div>
-        <div>${getDate(user.date)}</div>
+        <div>${format(new Date(user.date), "yyyy-MM-dd hh.mm.ss")}</div>
       </div>
       <div class="comment-body" >
      <div class ="comment-text"> ${user.text} </div>

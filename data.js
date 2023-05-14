@@ -1,4 +1,4 @@
-// Дата
+/*/ Дата
 export function getDate(date) {
   const options = {
       year: '2-digit',
@@ -10,7 +10,7 @@ export function getDate(date) {
   }
   const newDate = new Date(date);
   return newDate.toLocaleString('ru-RU', options).replace(',', ''); //  replace убирает запятую после даты
-}
+}*/
 
 export function delay(interval = 300) {
   return new Promise((resolve) => {

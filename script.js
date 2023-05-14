@@ -1,7 +1,7 @@
+import { format } from "date-fns";
 import { getCommentsList, fetchPostApi } from "./api.js";
-import {getDate, safety, delay, back} from "./data.js"
+import {safety, delay, back} from "./data.js"
 import { renderLoginComponent} from "./authorization.js";
-//import {getListComments} from "./listComments.js";
  let token = null;
  let comments = [];
  let name;
@@ -38,7 +38,7 @@ export const renderComments = () => {
     return `<li class="comment" data-index ='${index}'>
     <div class="comment-header">
      <div>${user.author.name}</div>
-     <div>${getDate(user.date)}</div>
+     <div>${format(new Date(user.date), "yyyy-MM-dd hh.mm.ss")}</div>
    </div>
    <div class="comment-body" data-comments="${index}" >
      <div class ="comment-text"> ${user.text} </div>
