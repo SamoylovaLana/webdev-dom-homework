@@ -81,3 +81,26 @@ export function loginUser({ login, password }) {
       return response.json()      
   });
 }
+
+export function addLike({ id }) {
+  return fetch(host + '/' + id + '/toggle-like', {
+      method: "POST",
+      headers: {
+          Authorization: token,
+      },
+  })
+      .then((response) => {
+          return response.json();
+      });
+}
+
+export function deleteComment( token, comments ) {
+  return fetch(host + '/' + comments[comments.length - 1].id,
+    {
+      method: 'DELETE',
+      headers: {
+        Authorization: token
+      }
+    }
+  )
+}

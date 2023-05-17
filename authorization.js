@@ -54,8 +54,8 @@ export function renderLoginComponent({
 
     document.getElementById("login-button").addEventListener("click", () => {
       if (isLoginMode) {
-        const login = document.getElementById('login-input').value
-        const password = document.getElementById('password-input').value
+        const login = document.getElementById('login-input').value;
+        const password = document.getElementById('password-input').value;
         if(!login) {
           alert('Введите логин');
           return;

@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { getCommentsList, fetchPostApi } from "./api.js";
+import { getCommentsList, fetchPostApi, deleteComment, addLike } from "./api.js";
 import {safety, delay, back} from "./data.js"
 import { renderLoginComponent} from "./authorization.js";
  let token = null;
@@ -46,7 +46,7 @@ export const renderComments = () => {
    <div class="comment-footer">
       <div class="likes">
         <span class="likes-counter">${user.likes}</span>
-        <button  data-index="${index}" class="like-button ${user.isLiked}"></button>
+        <button  data-index="${index}" class="${user.isLiked ? 'like-button -active-like' : 'like-button'}"></button>
       </div>
    </div>
    </li>`
@@ -60,18 +60,19 @@ export const renderComments = () => {
               </ul>
               <p id="added-comment"></p>
               <div id="add" class="add-form">
-              <input value = "${name}" id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
-              <textarea id="comment-textarea" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий"
-              rows="4"></textarea>
-              <div class="add-form-row">
-              <button id="add-button" class="add-form-button">Написать</button>
-              </div>
+                 <input value = "${name}" id="name-input" type="text" class="add-form-name" placeholder="Введите ваше имя" />
+                 <textarea id="comment-textarea" type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4"></textarea>
+                 <div class="add-form-row">
+                   <button id="add-button" class="add-form-button">Написать</button>
+                   <button data-id = 'id' id="delete-button" class="add-form-button">Удалить комментарий</button>
+                 </div>
             </div>
           </div>`;
 
   appEl.innerHTML = appHtml;
 
   const buttonElement = document.getElementById("add-button");
+  const deleteButtonElement = document.getElementById("delete-button");
   // const listElement = document.getElementById("list");
   const nameInputElement = document.getElementById("name-input");
   const commentTextAreaElement = document.getElementById("comment-textarea");
@@ -92,6 +93,7 @@ export const renderComments = () => {
       date: new Date(),
       forceError: true,
       token,
+      
     })
       .then(() => {
         return fetchGetAndRender();
@@ -121,19 +123,6 @@ export const renderComments = () => {
 
     renderComments();
   });
-    
-   //Расширенная валидация. Сделайте так, чтобы кнопка «Написать» выключалась 
-   //(становится некликабельной, красится в серый цвет), если имя или текст в 
-   //форме незаполненные.
-   function checkParams() {
-    if (nameInputElement.value.trim() != 0 && commentTextAreaElement.value.trim() != 0) {
-      buttonElement.style.backgroundColor = "#bcec30";
-      buttonElement.disabled = false;
-    } else {
-      buttonElement.style.backgroundColor = "gray";
-      buttonElement.disabled = true;
-    }
-  }
 
    // Добавление элемента в список по нажатию Enter 
   document.addEventListener("keyup",(event) => {
@@ -148,27 +137,37 @@ export const renderComments = () => {
      //Находит все элементы с классом like-button в разметке
     const likeElements = document.querySelectorAll('.like-button');
     //Цикл for проходит по каждому элементу в списке
-    for (const likeElement of likeElements) {
+    for (let likeElement of likeElements) {
       //Добавляет обработчик клика на конкретный элемент в списке
       likeElement.addEventListener('click', ( event) => {
         event.stopPropagation(); //останавливает всплытие события вверх по дереву
         likeElement.classList.add('-loading-like')
         delay(2000).then(()=> {
           if (!comments[likeElement.dataset.index].isLiked) {
-            comments[likeElement.dataset.index].isLiked = "";
+            comments[likeElement.dataset.index].isLiked = true;
             comments[likeElement.dataset.index].likes ++;
           } else {
-            comments[likeElement.dataset.index].isLiked = "-loading-like";
+            comments[likeElement.dataset.index].isLiked = false;
             comments[likeElement.dataset.index].likes -= 1;
           }
-            likeElement.classList.remove("-loading-like");
             
-            renderComments();
+          renderComments();
         })
       });
     }
   }
-  
+    
+     //Удаляем последний комментарий
+    deleteButtonElement.addEventListener('click', () => {
+      deleteComment( token, comments )
+      .then(response => {
+        comments.pop();
+        renderComments();
+        return response.json();
+      })
+     
+    })
+     
   // «Ответ на комментарий»
   function answer() {
    const commentElements = document.querySelectorAll('.comment');
@@ -180,7 +179,8 @@ export const renderComments = () => {
   };
   answer();
   likeButton();
+  
 };
-
+  
 renderComments();
 fetchGetAndRender();
